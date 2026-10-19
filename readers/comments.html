@@ -11,6 +11,11 @@
     <main>
       <section>
         <h1>Comments</h1>
+        <div id="banner" hidden>
+          <p>To vote or comment we need to set a cookie that remembers who you are, so you aren't asked again. Without it you can still see the votes and comments.</p>
+          <button class="button" data-accept>Accept cookie</button>
+          <button class="button" data-decline>No thanks</button>
+        </div>
         <form id="form">
           <p><label>Name <input name="author" maxlength="60" required></label></p>
           <p><label>Comment <textarea name="body" maxlength="1000" rows="4" required></textarea></label></p>
@@ -18,12 +23,18 @@
         </form>
         <p id="msg" role="status"></p>
         <div id="list"></div>
-        <p><a id="to-vote" href="vote.html">Back to the vote</a></p>
+        <p><a href="vote.html">Back to the vote</a></p>
         <script type="module">
-          import { addComment, listComments, getCode } from "./js/api.js";
+          import { addComment, listComments, initConsent } from "./js/api.js";
           const msg = document.getElementById("msg");
           const list = document.getElementById("list");
-          document.getElementById("to-vote").href = "vote.html?k=" + encodeURIComponent(getCode());
+          let voter = null;
+          const form = document.getElementById("form");
+          initConsent(document.getElementById("banner"), (id) => {
+            voter = id;
+            form.hidden = !id;
+            if (!id) msg.textContent = "Accept the cookie to leave a comment.";
+          });
           async function load() {
             try {
               const rows = await listComments();
@@ -40,7 +51,8 @@
             ev.preventDefault();
             const f = ev.target;
             try {
-              await addComment(f.author.value, f.body.value);
+              if (!voter) return;
+              await addComment(voter, f.author.value, f.body.value);
               f.reset();
               msg.textContent = "Thanks! Your comment will appear once approved.";
             } catch (e) { msg.textContent = e.message; }

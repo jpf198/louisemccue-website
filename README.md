@@ -11,18 +11,18 @@ To preview locally, run `python3 -m http.server` from this directory and open `h
 
 ## Readers' vote & comments (Supabase)
 
-Hidden pages at `/readers/vote.html` and `/readers/comments.html` are reached only via the QR code
-printed in the book: `https://<site>/readers/vote.html?k=<CODE>`. They are not linked from the site,
-are `noindex`, and are disallowed in `robots.txt`.
+Hidden pages at `/readers/vote.html` and `/readers/comments.html` are reached via the QR code/link
+printed in the book. They are not linked from the site, are `noindex`, and are disallowed in `robots.txt`.
+There is no per-visitor code: anyone with the link can view.
+
+- Visitors see a cookie prompt. If they decline, they can only see the vote counts and approved comments.
+- If they accept, a random `reader_id` cookie (1 year) is stored. It identifies them for voting (one vote each,
+  changeable) and commenting, and they are not asked again.
 
 Setup:
-1. Create a free Supabase project.
-2. Run `supabase/schema.sql` in the SQL editor.
-3. Put the project URL and anon key in `readers/js/config.js` (both are public values).
-4. Insert codes: `insert into book_codes(code, note) values (encode(gen_random_bytes(12),'hex'), 'batch 1');`
-   and print one in each QR URL. Each code has one vote (re-voting changes it). Set `revoked = true` to disable a leaked code.
-5. Moderate comments in the Table Editor: new comments have `approved = false`; set it to `true` to publish.
+1. Create a free Supabase project and run `supabase/schema.sql` in the SQL editor.
+2. Put the project URL and anon key in `readers/js/config.js` (both are public values).
+3. Moderate comments in the Table Editor: new comments have `approved = false`; set to `true` to publish.
 
-Tables have RLS enabled with no policies, so the browser can only use the `cast_vote`, `vote_results`,
-`add_comment` and `list_comments` functions, each of which checks the code. No environment variables are
-needed, since the site is static.
+RLS is enabled with no policies, so the browser can only use the functions in the schema. The cookie id
+is client-generated, so this is deterrence against casual repeat voting, not strong protection.
