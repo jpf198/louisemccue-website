@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Comments | Lou McCue</title>
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+  <body>
+    <main>
+      <section>
+        <h1>Comments</h1>
+        <div id="banner" hidden>
+          <p>To vote or comment we need to set a cookie that remembers who you are, so you aren't asked again. Without it you can still see the votes and comments.</p>
+          <button class="button" data-accept>Accept cookie</button>
+          <button class="button" data-decline>No thanks</button>
+        </div>
+        <form id="form">
+          <p><label>Name <input name="author" maxlength="60" required></label></p>
+          <p><label>Comment <textarea name="body" maxlength="1000" rows="4" required></textarea></label></p>
+          <button class="button" type="submit">Send</button>
+        </form>
+        <p id="msg" role="status"></p>
+        <div id="list"></div>
+        <p><a href="vote.html">Back to the vote</a></p>
+        <script type="module">
+          import { addComment, listComments, initConsent } from "./js/api.js";
+          const msg = document.getElementById("msg");
+          const list = document.getElementById("list");
+          let voter = null;
+          const form = document.getElementById("form");
+          initConsent(document.getElementById("banner"), (id) => {
+            voter = id;
+            form.hidden = !id;
+            if (!id) msg.textContent = "Accept the cookie to leave a comment.";
+          });
+          async function load() {
+            try {
+              const rows = await listComments();
+              list.replaceChildren(...rows.map((c) => {
+                const d = document.createElement("p");
+                const s = document.createElement("strong");
+                s.textContent = c.author;
+                d.append(s, document.createElement("br"), document.createTextNode(c.body));
+                return d;
+              }));
+            } catch (e) { msg.textContent = e.message; }
+          }
+          document.getElementById("form").addEventListener("submit", async (ev) => {
+            ev.preventDefault();
+            const f = ev.target;
+            try {
+              if (!voter) return;
+              await addComment(voter, f.author.value, f.body.value);
+              f.reset();
+              msg.textContent = "Thanks! Your comment will appear once approved.";
+            } catch (e) { msg.textContent = e.message; }
+          });
+          load();
+        </script>
+      </section>
+    </main>
+  </body>
+</html>

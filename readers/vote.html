@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Vote | Lou McCue</title>
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+  <body>
+    <main>
+      <section>
+        <h1>Did she or didn't she?</h1>
+        <p>Did Sarah, or didn't Sarah, with Ruben?</p>
+        <div id="banner" hidden>
+          <p>To vote or comment we need to set a cookie that remembers who you are, so you aren't asked again. Without it you can still see the votes and comments.</p>
+          <button class="button" data-accept>Accept cookie</button>
+          <button class="button" data-decline>No thanks</button>
+        </div>
+        <p id="msg" role="status"></p>
+        <p id="buttons">
+          <button class="button" data-choice="did">She did</button>
+          <button class="button" data-choice="didnt">She didn't</button>
+        </p>
+        <p id="results"></p>
+        <p><a href="comments.html">Read and leave comments</a></p>
+        <script type="module">
+          import { castVote, voteResults, myVote, initConsent } from "./js/api.js";
+          const msg = document.getElementById("msg");
+          const results = document.getElementById("results");
+          const buttons = document.querySelectorAll("[data-choice]");
+          let voter = null;
+          const show = (r) => { results.textContent = `She did: ${r.did} · She didn't: ${r.didnt}`; };
+          voteResults().then(show).catch((e) => { msg.textContent = e.message; });
+          initConsent(document.getElementById("banner"), async (id) => {
+            voter = id;
+            buttons.forEach((b) => { b.disabled = !id; });
+            if (!id) { msg.textContent = "Accept the cookie to cast your vote."; return; }
+            msg.textContent = "";
+            try {
+              const prev = await myVote(id);
+              if (prev) msg.textContent = "You voted: " + (prev === "did" ? "She did" : "She didn't") + ". You can change your vote.";
+            } catch (e) { /* ignore */ }
+          });
+          buttons.forEach((b) => b.addEventListener("click", async () => {
+            if (!voter) return;
+            try { show(await castVote(voter, b.dataset.choice)); msg.textContent = "Thanks, your vote is in."; }
+            catch (e) { msg.textContent = e.message; }
+          }));
+        </script>
+      </section>
+    </main>
+  </body>
+</html>
