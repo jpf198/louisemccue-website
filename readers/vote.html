@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Vote | Lou McCue</title>
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+  <body>
+    <main>
+      <section>
+        <h1>Did she or didn't she?</h1>
+        <p>Did Sarah, or didn't Sarah, with Ruben?</p>
+        <p id="msg" role="status"></p>
+        <p>
+          <button class="button" data-choice="did">She did</button>
+          <button class="button" data-choice="didnt">She didn't</button>
+        </p>
+        <p id="results" hidden></p>
+        <p><a id="to-comments" href="comments.html">Read and leave comments</a></p>
+        <script type="module">
+          import { castVote, getCode } from "./js/api.js";
+          const msg = document.getElementById("msg");
+          const results = document.getElementById("results");
+          document.getElementById("to-comments").href = "comments.html?k=" + encodeURIComponent(getCode());
+          document.querySelectorAll("[data-choice]").forEach((b) =>
+            b.addEventListener("click", async () => {
+              try {
+                const r = await castVote(b.dataset.choice);
+                msg.textContent = "Thanks, your vote is in.";
+                results.hidden = false;
+                results.textContent = `She did: ${r.did} · She didn't: ${r.didnt}`;
+              } catch (e) { msg.textContent = e.message; }
+            }));
+        </script>
+      </section>
+    </main>
+  </body>
+</html>
