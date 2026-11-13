@@ -234,6 +234,73 @@ nav a[aria-current="page"] {
 .reader-message { min-height: 1.55em; margin: 0; }
 .vote-comments { margin: 0; }
 
+.kit-signup-form {
+  max-width: 700px;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--black);
+  font-family: var(--body);
+}
+
+.kit-signup-form [data-style="full"] { width: 100%; }
+.kit-signup-form .formkit-column { padding: 0; }
+.kit-signup-form .formkit-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.kit-signup-form .formkit-field { min-width: 0; margin: 0; }
+.kit-signup-form .formkit-input {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid #b9b4b1;
+  border-radius: 0 1rem;
+  background: var(--white);
+  color: var(--black);
+  font: inherit;
+}
+
+.kit-signup-form .formkit-input:focus-visible {
+  outline: 3px solid var(--black);
+  outline-offset: 2px;
+}
+
+.kit-signup-form .formkit-submit {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 0;
+  padding: 0.9rem 2.2rem;
+  border: 0;
+  border-radius: 0 1rem;
+  background: var(--red);
+  color: var(--white);
+  font: 600 1rem var(--body);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.kit-signup-form .formkit-submit:hover { background: var(--red-dark); }
+.kit-signup-form .formkit-submit:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
+.kit-signup-form .formkit-alert { width: 100%; margin: 0 0 12px; padding: 12px; }
+.kit-signup-form .formkit-guarantee { margin: 12px 0 0; font-size: 0.85rem; }
+.kit-signup-form .formkit-powered-by-convertkit-container { margin-top: 8px; }
+.kit-signup-form .formkit-powered-by-convertkit {
+  width: auto;
+  height: auto;
+  background: none;
+  color: inherit;
+  font-size: 0.75rem;
+  text-indent: 0;
+}
+
 @media (max-width: 760px) {
   .hero, .book-teaser, .book-details, .about-content { grid-template-columns: 1fr; }
   .hero-art { order: 0; max-width: 320px; }
@@ -241,4 +308,6 @@ nav a[aria-current="page"] {
   .site-header, .site-footer { flex-direction: column; align-items: flex-start; }
   .vote-choices { flex-direction: column; }
   .vote-choices .button { width: 100%; }
+  .kit-signup-form .formkit-fields { grid-template-columns: 1fr; }
+  .kit-signup-form .formkit-submit { grid-column: auto; }
 }
