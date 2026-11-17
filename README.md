@@ -9,8 +9,8 @@ A static author website for Louise McCue.
 
 To preview locally, run `python3 -m http.server` from this directory and open `http://localhost:8000`.
 
-The homepage mailing-list form is embedded from Kit. Edit the form and its subscription settings in Kit;
-the embed requires JavaScript and a connection to Kit.
+The homepage mailing-list form posts to Kit and is styled by `styles.css`. Edit the form and its
+subscription settings in Kit; its JavaScript enhances the inline signup experience.
 
 ## Readers' vote & comments (Supabase)
 
